@@ -1,1 +1,4 @@
 1) need to decide on fields of schemas => what is required/unique and so on...
+
+Branches -
+mongo - all schemas and mongo related subject should be only on this branch.
