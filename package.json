@@ -1,0 +1,34 @@
+{
+  "name": "admycar_be",
+  "version": "1.0.0",
+  "description": "AdMyCar by AAOG Group",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaoggroup/admycar_be.git"
+  },
+  "keywords": [
+    "admycar"
+  ],
+  "author": "Aviad S. / Aviram M. / Omer D. / Grigori P.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaoggroup/admycar_be/issues"
+  },
+  "homepage": "https://github.com/aaoggroup/admycar_be#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cors": "^2.8.5",
+    "dotenv": "^11.0.0",
+    "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.1.6"
+  }
+}
