@@ -1,64 +1,64 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const AdvertisersSchema = new mongoose.Schema({
   first_name: {
     type: String,
-    required: true
+    required: true,
   },
   last_name: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   hash_password: {
     type: String,
-    required: true
+    required: true,
   },
   company_name: {
     type: String,
-    required: true
+    required: true,
   },
   hash_password: {
     type: String,
-    required: true
+    required: true,
   },
   balance: {
     type: Number,
     required: true,
-    default: 0
+    default: 0,
   },
   company_number: {
-    type: Number
+    type: Number,
   },
   company_vat_id: {
-    type: Number
+    type: Number,
   },
   country: {
-    type: String
+    type: String,
   },
   city: {
-    type: String
+    type: String,
   },
   address: {
-    type: String
+    type: String,
   },
   zip_code: {
-    type: Number
+    type: Number,
   },
   phone_number: {
-    type: Number
+    type: Number,
   },
   date_created: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   date_modified: {
     type: Date,
-  }
+  },
 });
 
-module.exports = mongoose.model('advertisers', AdvertisersSchema);
+module.exports = mongoose.model("advertisers", AdvertisersSchema);

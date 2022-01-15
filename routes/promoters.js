@@ -25,10 +25,4 @@ router.put("/chargeAdvertiser/", async (req, res) => {
   }
 });
 
-{
-  assset: asdsad;
-  bid: 2;
-  companyid: 12;
-}
-
 module.exports = router;

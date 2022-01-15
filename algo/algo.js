@@ -1,6 +1,6 @@
 //import getAllCampaignsFromDB from db util
 
-export const algo = (obj) => {
+const algo = (obj) => {
   const { area, promoterID } = obj;
   const poolOfCampaigns = getAllRelevantCampaign(area);
   const sortedCampaigns = sortCampaigns(poolOfCampaigns);
@@ -19,5 +19,6 @@ const getAllRelevantCampaign = (area) => {
   //getAllRelvevantCampaignsFromDB(conditions)
   const campaigns = getAllCampaignsFromDB(area);
 };
+module.exports = { algo };
 
 //
