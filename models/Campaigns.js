@@ -5,7 +5,7 @@ const CampaignsSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  advertiser_id: {
+  company_id: {
     type: String,
     required: true
   },
