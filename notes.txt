@@ -2,3 +2,5 @@
 
 Branches -
 mongo - all schemas and mongo related subject should be only on this branch.
+algo - algorithm related function
+cloudinary - image upload setup
