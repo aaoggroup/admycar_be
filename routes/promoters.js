@@ -2,6 +2,9 @@ const express = require("express");
 const { algo } = require("../algo/algo");
 const router = express.Router();
 const PromotersSchema = require("../models/Promoters");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require("dotenv").config();
 
 router.get("/adtostream", async (req, res) => {
   const properties = {
@@ -25,6 +28,118 @@ router.put("/chargeCompany/", async (req, res) => {
     console.error(err);
   }
 });
+
+// @desc        signup promoter
+// @route       POST /promoter/signup
+// @access      Public
+router.post("/signup", async (req, res) => {
+  const { first_name, last_name, email, password, confirm_password, phone_number } = req.body;
+  if(password !== confirm_password){
+    return res.status(400).json({
+      success: false,
+      data: 'Passwords do not match',
+    });
+  }
+  try {
+    const hashed_password = await bcrypt.hash(password, 10);
+    const user = await User.create({
+        first_name,
+        last_name,
+        email,
+        hashed_password,
+        phone_number
+    });
+    console.log(user);
+    
+    const payload = {
+        user: {
+            first_name,
+            last_name,
+            email,
+        }
+    };
+
+    jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        {expiresIn: '5 days'},
+        (err, token) => {
+            if(err) throw(err);
+            res.status(200).json({
+                token,
+                payload,
+                success: true
+            });
+        }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      data: "Server error",
+    });
+  }
+});
+
+// @desc        Login promoter
+// @route       POST /promoter/login
+// @access      Public
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;  
+  try {
+    if(!email || !password) {
+        return res.status(400).json({
+                  success: false,
+                  data: 'Please provide password & email',
+              });
+    }
+    const promoter = await PromotersSchema.findOne({ email }).select('+hash_password', '+first_name', '+last_name', '+email');
+
+    if(!promoter) {
+        return res.status(400).json({
+                  success: false,
+                  data: 'Promoter was not found',
+              });
+    }
+
+    const isMatch = await bcrypt.compare(password, promoter.password_hash);
+    if(!isMatch){
+        return res.status(400).json({
+                  success: false,
+                  data: 'The password you provided is incorrect',
+              });
+    }
+    const payload = {
+        user: {
+            first_name: promoter.first_name,
+            last_name: promoter.last_name,
+            email: promoter.email
+        }
+    }
+
+    console.log(payload);
+    jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        {expiresIn: '5 days'},
+        (err, token) => {
+            if(err) throw(err);
+            res.status(200).json({
+                token,
+                payload,
+                success: true
+            });
+        }
+    ); 
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        success: false,
+        data: "Server error",
+      });
+  }
+});
+
 
 // @desc        Get all promoters
 // @route       GET /promoters

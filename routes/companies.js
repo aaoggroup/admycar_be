@@ -5,10 +5,8 @@ const CampaignsSchema = require("../models/Campaigns");
 const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 
 router.post("/addCampaign", async (req, res) => {
-  console.log(req.body);
   try {
     const imageURL = await uploadToCloudinary(req.body.asset);
-    console.log(imageURL);
     const campaignsProperties = {
       campaign_name: req.body.campaign_name,
       company_id: req.body.company_id,

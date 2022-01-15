@@ -20,12 +20,10 @@ const PromotersSchema = new mongoose.Schema({
   },
   pending_balance: {
     type: Number,
-    required: true,
     default: 0
   },
   withdrawal_balance: {
     type: Number,
-    required: true,
     default: 0
   },
   id_tz: {
