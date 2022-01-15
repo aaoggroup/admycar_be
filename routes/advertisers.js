@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const AdvertisersSchema = require('../models/Advertisers');
+const CampaignsSchema = require('../models/Campaigns');
+const { cloudinary, uploadToCloudinary } = require('../config/cloudinary');
 
 router.post("/addCampaign", async (req, res) => {
   console.log(req.body);
@@ -14,11 +17,16 @@ router.post("/addCampaign", async (req, res) => {
     date_created: Date.now(),
   };
   try {
-    const response = addCampaignToDB(campaignsProperties);
+    const response = await CampaignsSchema.create(campaignsProperties);
+    console.log(response);
     //work with response
   } catch (err) {
     console.error(err);
   }
 });
+
+const addCampaignToDB = async () => {
+  const response = await Advertisers.create()
+}
 
 module.exports = router;
