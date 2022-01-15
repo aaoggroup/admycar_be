@@ -4,3 +4,7 @@ Branches -
 mongo - all schemas and mongo related subject should be only on this branch.
 algo - algorithm related function
 cloudinary - image upload setup
+auth - what relates to authentication
+promoters - what relates to promoters
+campaigns - what relates to campaigns
+companies - what relates to companies
