@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const AdvertisersSchema = require("../models/Advertisers");
+const CompaniesSchema = require("../models/Companies");
 const CampaignsSchema = require("../models/Campaigns");
 const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 
@@ -29,7 +29,7 @@ router.post("/addCampaign", async (req, res) => {
 });
 
 const addCampaignToDB = async () => {
-  const response = await Advertisers.create();
+  const response = await Companies.create();
 };
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const AdvertisersSchema = new mongoose.Schema({
+const CompaniesSchema = new mongoose.Schema({
   first_name: {
     type: String,
     required: true,
@@ -61,4 +61,4 @@ const AdvertisersSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("advertisers", AdvertisersSchema);
+module.exports = mongoose.model("companies", CompaniesSchema);
