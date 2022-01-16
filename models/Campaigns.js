@@ -1,9 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const CampaignsSchema = new mongoose.Schema({
   campaign_name: {
     type: String,
-    required: true
+    required: true,
+  },
+  campaign_status: {
+    type: String,
+    required: true,
   },
   company_id: {
         type: mongoose.Schema.ObjectId,
@@ -26,15 +30,21 @@ const CampaignsSchema = new mongoose.Schema({
     type: Number,
   },
   area: {
-    type: Number
+    type: Number,
+  },
+  today_spent: {
+    type: Number,
+  },
+  total_spent: {
+    type: Number,
   },
   date_created: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   date_modified: {
     type: Date,
-  }
+  },
 });
 
-module.exports = mongoose.model('campaigns', CampaignsSchema);
+module.exports = mongoose.model("campaigns", CampaignsSchema);

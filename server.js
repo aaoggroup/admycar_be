@@ -6,6 +6,7 @@ const promotersRoute = require("./routes/promoters");
 const companiesRoute = require("./routes/companies");
 const campaignsRoute = require("./routes/campaigns"); 
 connectDB();
+const { algo } = require("./algo/algo");
 
 const app = express();
 app.use(cors());
@@ -16,8 +17,8 @@ app.use(express.urlencoded({ limit: "50mb" }));
 app.use("/promoters", promotersRoute);
 app.use("/companies", companiesRoute);
 app.use("/campaigns", campaignsRoute);
-
-app.listen(process.env.PORT, process.env.HOST, () => {
+app.listen(process.env.PORT, process.env.HOST, async () => {
+  await algo({ area: 4 });
   console.log(
     "Running AdMyCar by AAOG server on " +
       process.env.HOST +
