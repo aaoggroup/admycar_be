@@ -22,6 +22,9 @@ const CampaignsSchema = new mongoose.Schema({
   daily_budget: {
     type: Number,
   },
+  today_spent: {
+    type: Number,
+  },
   total_budget: {
     type: Number,
   },

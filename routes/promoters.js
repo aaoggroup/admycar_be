@@ -55,6 +55,7 @@ router.post("/signup", async (req, res) => {
       email,
       hash_password,
       phone_number,
+      type: 'Promoter'
     });
     console.log(user);
 
@@ -63,6 +64,7 @@ router.post("/signup", async (req, res) => {
         first_name,
         last_name,
         email,
+        type: 'Promoter'
       },
     };
     console.log(process.env.JWT_SECRET);
@@ -122,6 +124,7 @@ router.post("/login", async (req, res) => {
         first_name: promoter.first_name,
         last_name: promoter.last_name,
         email: promoter.email,
+        type: promoter.type
       },
     };
 

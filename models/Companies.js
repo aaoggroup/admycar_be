@@ -18,11 +18,11 @@ const CompaniesSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  company_name: {
+  type: {
     type: String,
-    required: true,
+    required: true
   },
-  hash_password: {
+  company_name: {
     type: String,
     required: true,
   },
