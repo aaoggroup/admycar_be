@@ -20,8 +20,10 @@ const getAllRelevantCampaign = async (area) => {
   //getAllRelvevantCampaignsFromDB(conditions)
 
   const campaigns = await CampaignsSchema.find();
-  const filteredCampaigns = campaigns.filter((camp) => "xx");
-  console.log(campaigns);
+  const filteredCampaigns = campaigns.filter(
+    (campaign) => campaign.daily_budget > campaign.today_spent
+  );
+  console.log(filteredCampaigns);
 };
 module.exports = { algo, getAllRelevantCampaign };
 
