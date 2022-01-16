@@ -5,33 +5,33 @@ const CampaignsSchema = require("../models/Campaigns");
 const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
-router.post("/addCampaign", async (req, res) => {
-  try {
-    const imageURL = await uploadToCloudinary(req.body.asset);
-    const campaignsProperties = {
-      campaign_name: req.body.campaign_name,
-      company_id: req.body.company_id,
-      asset: imageURL,
-      current_bid: req.body.current_bid,
-      daily_budget: req.body.daily_budget,
-      total_budget: req.body.total_budget,
-      area: req.body.area,
-      date_created: String(Date.now()),
-    };
 
-    const response = await CampaignsSchema.create(campaignsProperties);
-    console.log(response);
-    res.send(response);
-  } catch (err) {
-    console.error(err);
-  }
-});
+// router.post("/addCampaign", async (req, res) => {
+//   try {
+//     const imageURL = await uploadToCloudinary(req.body.asset);
+//     const campaignsProperties = {
+//       campaign_name: req.body.campaign_name,
+//       company_id: req.body.company_id,
+//       asset: imageURL,
+//       current_bid: req.body.current_bid,
+//       daily_budget: req.body.daily_budget,
+//       total_budget: req.body.total_budget,
+//       area: req.body.area,
+//       date_created: String(Date.now()),
+//     };
 
-const addCampaignToDB = async () => {
-  const response = await Companies.create();
-};
+//     const response = await CampaignsSchema.create(campaignsProperties);
+//     console.log(response);
+//     res.send(response);
+//   } catch (err) {
+//     console.error(err);
+//   }
+// });
+
+// const addCampaignToDB = async () => {
+//   const response = await Companies.create();
+// };
 
 // @desc        signup company
 // @route       POST /company/signup
@@ -68,6 +68,7 @@ router.post("/signup", async (req, res) => {
       company_vat_id
     });
     console.log(company);
+    console.log(company.id);
 
     const payload = {
       user: {
@@ -75,7 +76,8 @@ router.post("/signup", async (req, res) => {
         last_name,
         email,
         type: 'Company',
-        company_name
+        company_name,
+        company_id: company.id
       },
     };
     console.log(process.env.JWT_SECRET);
@@ -136,7 +138,8 @@ router.post("/login", async (req, res) => {
         last_name: company.last_name,
         email: company.email,
         type: company.type,
-        company_name: company.company_name
+        company_name: company.company_name,
+        company_id: company.id
       },
     };
 

@@ -6,8 +6,9 @@ const CampaignsSchema = new mongoose.Schema({
     required: true
   },
   company_id: {
-    type: String,
-    required: true
+        type: mongoose.Schema.ObjectId,
+        ref: 'companies',
+        required: true
   },
   asset: {
     type: String,

@@ -49,7 +49,7 @@ router.post("/signup", async (req, res) => {
   }
   try {
     const hash_password = await bcrypt.hash(password, 10);
-    const user = await PromotersSchema.create({
+    const promoter = await PromotersSchema.create({
       first_name,
       last_name,
       email,
@@ -57,17 +57,19 @@ router.post("/signup", async (req, res) => {
       phone_number,
       type: 'Promoter'
     });
-    console.log(user);
+    console.log(promoter);
+    console.log(promoter.id);
 
     const payload = {
       user: {
         first_name,
         last_name,
         email,
-        type: 'Promoter'
+        type: 'Promoter',
+        promoter_id: promoter.id
       },
     };
-    console.log(process.env.JWT_SECRET);
+
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
@@ -124,7 +126,8 @@ router.post("/login", async (req, res) => {
         first_name: promoter.first_name,
         last_name: promoter.last_name,
         email: promoter.email,
-        type: promoter.type
+        type: promoter.type,
+        promoter_id: promoter.id
       },
     };
 
@@ -195,30 +198,11 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// @desc        Create new promoter
-// @route       POST /promoters
-// @access      Public
-router.post("/", async (req, res) => {
-  try {
-    const promoter = await PromotersSchema.create(req.body);
-
-    res.status(200).json({
-      success: true,
-      data: promoter,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      success: false,
-      data: "Server error",
-    });
-  }
-});
-
 // @desc        Update promoter
 // @route       PUT /promoters/:id
 // @access      Private
 router.put("/:id", async (req, res) => {
+  // if id === auth.id then => 
   try {
     const promoter = await PromotersSchema.findByIdAndUpdate(
       req.params.id,
@@ -246,6 +230,7 @@ router.put("/:id", async (req, res) => {
 // @route       delete /promoters/:id
 // @access      Private
 router.delete("/:id", async (req, res) => {
+  // if id === auth.id then => 
   try {
     const promoter = await PromotersSchema.findByIdAndDelete(req.params.id);
 
