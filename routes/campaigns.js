@@ -11,7 +11,7 @@ router.get('/', async(req,res) => {
   try {
     const campaigns = await CampaignsSchema.find().populate({
         path: 'campaigns',
-        select: 'campaign_name company_id asset current_bid daily_budget total_budget area'
+        select: 'campaign_name company_id asset current_bid daily_budget total_budget today_spent area'
     });
 
     res.status(200).json({

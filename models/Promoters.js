@@ -18,6 +18,10 @@ const PromotersSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  type: {
+    type: String,
+    required: true
+  },
   pending_balance: {
     type: Number,
     default: 0
