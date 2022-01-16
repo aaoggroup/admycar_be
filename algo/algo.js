@@ -1,4 +1,5 @@
 //import getAllCampaignsFromDB from db util
+const CampaignsSchema = require("../models/Campaigns");
 
 const algo = (obj) => {
   const { area, promoterID } = obj;
@@ -15,10 +16,41 @@ const sortCampaigns = (campaigns) => {
   return sortedCampaigns;
 };
 
-const getAllRelevantCampaign = (area) => {
+const getAllRelevantCampaign = async (area) => {
   //getAllRelvevantCampaignsFromDB(conditions)
-  const campaigns = getAllCampaignsFromDB(area);
+
+  const campaigns = await CampaignsSchema.find();
+  const filteredCampaigns = campaigns.filter((camp) => "xx");
+  console.log(campaigns);
 };
-module.exports = { algo };
+module.exports = { algo, getAllRelevantCampaign };
 
 //
+
+/*
+daily 20
+1
+daily 19
+2
+daily 17
+
+
+
+SELECT * FROM CAMPAIGNS WHERE DAILYBUDGET(20) < TODAYSSPENT(21)
+
+
+
+putAssetOnMonitor
+ChargeTheCompany
+addToCampaignTodaySpentTheBid
+*/
+
+/*
+
+  const campaigns = await CampaignsSchema.find({
+    area: area,
+    campaign_status: "Active",
+    $where: "this.daily_budget > this.today_spent",
+  });
+
+  */
