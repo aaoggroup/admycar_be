@@ -1,37 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const CompaniesSchema = require("../models/Companies");
-const CampaignsSchema = require("../models/Campaigns");
-const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-
-// router.post("/addCampaign", async (req, res) => {
-//   try {
-//     const imageURL = await uploadToCloudinary(req.body.asset);
-//     const campaignsProperties = {
-//       campaign_name: req.body.campaign_name,
-//       company_id: req.body.company_id,
-//       asset: imageURL,
-//       current_bid: req.body.current_bid,
-//       daily_budget: req.body.daily_budget,
-//       total_budget: req.body.total_budget,
-//       area: req.body.area,
-//       date_created: String(Date.now()),
-//     };
-
-//     const response = await CampaignsSchema.create(campaignsProperties);
-//     console.log(response);
-//     res.send(response);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// });
-
-// const addCampaignToDB = async () => {
-//   const response = await Companies.create();
-// };
+const {auth} = require('../middleware/auth');
 
 // @desc        signup company
 // @route       POST /company/signup
@@ -80,7 +52,6 @@ router.post("/signup", async (req, res) => {
         company_id: company.id
       },
     };
-    console.log(process.env.JWT_SECRET);
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
@@ -170,12 +141,15 @@ router.post("/login", async (req, res) => {
 // @route       GET /companies
 // @access      Private
 // need middleware to authenticate admin
-router.get('/', async(req,res) => {
+router.get('/', auth, async(req,res) => {
+  if(req.user.type !== 'Admin'){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
-    const companies = await CompaniesSchema.find().populate({
-        path: 'campaigns',
-        select: 'first_name last_name email company_name company_number company_vat_id'
-    });
+    const companies = await CompaniesSchema.find();
 
     res.status(200).json({
         success: true,
@@ -193,30 +167,17 @@ router.get('/', async(req,res) => {
 // @desc        Get single company
 // @route       GET /companies/:id
 // @access      Private
-router.get('/:id', async(req,res) => {
-  try {
-    const company = await CompaniesSchema.find(req.params.id);
-
-    res.status(200).json({
-        success: true,
-        data: company
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-        success: false,
-        data: 'Server error'
-    });
+router.get('/:id', auth, async(req,res) => {
+  const { type, company_id } = req.user;
+  const { id } = req.params;
+  if( type !== 'Admin' || company_id !== id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
   }
-})
-
-// @desc        Create new company
-// @route       POST /companies
-// @access      public
-router.post('/', async(req,res) => {
   try {
-    const company = await CompaniesSchema.create(req.body);
-
+    const company = await CompaniesSchema.find(id);
     res.status(200).json({
         success: true,
         data: company
@@ -233,9 +194,17 @@ router.post('/', async(req,res) => {
 // @desc        Update company
 // @route       PUT /companies/:id
 // @access      Private
-router.put('/:id', async(req,res) => {
+router.put('/:id', auth, async(req,res) => {
+  const { type, company_id } = req.user;
+  const { id } = req.params;
+  if( type !== 'Admin' || company_id !== id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
-    const company = await CompaniesSchema.findByIdAndUpdate(req.params.id, req.body, {
+    const company = await CompaniesSchema.findByIdAndUpdate(id, req.body, {
         new: true,
         runValidators: true
     });
@@ -256,10 +225,17 @@ router.put('/:id', async(req,res) => {
 // @desc        Delete company
 // @route       delete /companies/:id
 // @access      Private
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
+  const { type, company_id } = req.user;
+  const { id } = req.params;
+  if( type !== 'Admin' || company_id !== id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
-    const company = await PromotersSchema.findByIdAndDelete(req.params.id);
-
+    const company = await PromotersSchema.findByIdAndDelete(id);
     res.status(200).json({
       success: true,
       data: company,

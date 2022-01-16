@@ -17,6 +17,7 @@ app.use(express.urlencoded({ limit: "50mb" }));
 app.use("/promoters", promotersRoute);
 app.use("/companies", companiesRoute);
 app.use("/campaigns", campaignsRoute);
+
 app.listen(process.env.PORT, process.env.HOST, async () => {
   // await algo({ area: 4 });
   console.log(

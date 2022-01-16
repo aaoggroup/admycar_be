@@ -4,12 +4,20 @@ const router = express.Router();
 const CampaignsSchema = require("../models/Campaigns");
 const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 require("dotenv").config();
+const {auth} = require('../middleware/auth');
 
 // @desc        Get all campaigns
 // @route       GET /campaigns
 // @access      Private
 // need middleware to authenticate admin
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
+  const { type } = req.user;
+  if( type !== 'Admin' ){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
     const campaigns = await CampaignsSchema.find();
 
@@ -30,21 +38,26 @@ router.get("/", async (req, res) => {
 // @route       GET /campaigns/:company_id
 // @access      Private
 // need middleware to authenticate admin
-router.get("/:company_id", async (req, res) => {
+router.get("/:company_id", auth, async (req, res) => {
+  const { type, company_id: comp_id } = req.user;
   const { company_id } = req.params;
+  if( type !== 'Admin' || comp_id !== company_id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
-    if (company_id) {
-      const campaigns = await CampaignsSchema.find({
-        company_id: company_id,
-      });
-      console.log(campaigns);
+    const campaigns = await CampaignsSchema.find({
+      company_id: company_id,
+    });
+    console.log(campaigns);
 
-      return res.status(200).json({
-        success: true,
-        count: campaigns.length,
-        data: campaigns,
-      });
-    }
+    return res.status(200).json({
+      success: true,
+      count: campaigns.length,
+      data: campaigns,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -55,11 +68,19 @@ router.get("/:company_id", async (req, res) => {
 });
 
 // @desc        Get single campaign
-// @route       GET /campaigns/:id
+// @route       GET /campaigns/:campaign_id/:company_id
 // @access      Private
-router.get("/:id", async (req, res) => {
+router.get("/:campaign_id/:company_id", auth, async (req, res) => {
+  const { type, company_id: comp_id } = req.user;
+  const { campaign_id, company_id } = req.params;
+  if( type !== 'Admin' || comp_id !== company_id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
-    const campaign = await CampaignsSchema.find(req.params.id);
+    const campaign = await CampaignsSchema.find(campaign_id);
 
     res.status(200).json({
       success: true,
@@ -77,10 +98,21 @@ router.get("/:id", async (req, res) => {
 // @desc        Create new campaign by company
 // @route       POST /campaigns/:company_id
 // @access      Private
-router.post("/:company_id", async (req, res) => {
-  // if  type === 'Company
+router.post("/:company_id", auth, async (req, res) => {
+  const { type, company_id: comp_id } = req.user;
+  const { company_id } = req.params;
+  const { asset, ...rest } = req.body;
+  console.log(req.body);
+  if( type !== 'Admin' || comp_id !== company_id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
-    const campaign = await CampaignsSchema.create(req.body);
+    const cloudRes = await uploadToCloudinery(asset);
+    console.log({...rest, asset: cloudRes});
+    const campaign = await CampaignsSchema.create({...rest, asset: cloudRes});
 
     res.status(200).json({
       success: true,
@@ -96,20 +128,62 @@ router.post("/:company_id", async (req, res) => {
 });
 
 // @desc        Update campaign
-// @route       PUT /campaigns/:id
+// @route       PUT /campaigns/:campaign_id/:company_id
 // @access      Private
-router.put("/:id", async (req, res) => {
-  // if company_id === id in auth then =>
+router.put("/:campaign_id/:company_id", auth, async (req, res) => {
+  const { type, company_id: comp_id } = req.user;
+  const { campaign_id, company_id } = req.params;
+  if( type !== 'Admin' || comp_id !== company_id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
   try {
     const campaign = await CampaignsSchema.findByIdAndUpdate(
-      req.params.id,
+      campaign_id,
       req.body,
       {
         new: true,
         runValidators: true,
       }
     );
+    res.status(200).json({
+      success: true,
+      data: campaign,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      data: "Server error",
+    });
+  }
+});
 
+// @desc        Update campaign assets
+// @route       PUT /campaigns/asset/:campaign_id/:company_id
+// @access      Private
+router.put("/asset/:campaign_id/:company_id", auth, async (req, res) => {
+  const { type, company_id: comp_id } = req.user;
+  const { campaign_id, company_id } = req.params;
+  const { asset } = req.body;
+  if( type !== 'Admin' || comp_id !== company_id){
+    return res.status(400).json({
+      success: false,
+      data: 'Not Authorized'
+    })
+  }
+  try {
+    const cloudRes = await uploadToCloudinery(asset);
+    const campaign = await CampaignsSchema.findByIdAndUpdate(
+      campaign_id,
+      {asset: cloudRes},
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     res.status(200).json({
       success: true,
       data: campaign,

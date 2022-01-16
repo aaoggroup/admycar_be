@@ -5,6 +5,8 @@ const PromotersSchema = require("../models/Promoters");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const {auth} = require('../middleware/auth');
+
 
 router.get("/adtostream", async (req, res) => {
   const properties = {
