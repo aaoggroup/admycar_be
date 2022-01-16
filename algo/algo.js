@@ -5,7 +5,6 @@ const algo = async (obj) => {
   const { area, promoterID } = obj;
   const poolOfCampaigns = await getAllRelevantCampaign(area);
   const campaignToStream = sortCampaigns(poolOfCampaigns);
-  console.log(campaignToStream);
   //check how many times campaign was live
   //inject to history which promoter got which ad
   return campaignToStream;
@@ -39,33 +38,3 @@ const getAllRelevantCampaign = async (area) => {
   return filteredCampaigns;
 };
 module.exports = { algo };
-
-//
-
-/*
-daily 20
-1
-daily 19
-2
-daily 17
-
-
-
-SELECT * FROM CAMPAIGNS WHERE DAILYBUDGET(20) < TODAYSSPENT(21)
-
-
-
-putAssetOnMonitor
-ChargeTheCompany
-addToCampaignTodaySpentTheBid
-*/
-
-/*
-
-  const campaigns = await CampaignsSchema.find({
-    area: area,
-    campaign_status: "Active",
-    $where: "this.daily_budget > this.today_spent",
-  });
-
-  */

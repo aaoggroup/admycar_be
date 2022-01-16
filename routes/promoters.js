@@ -5,8 +5,7 @@ const PromotersSchema = require("../models/Promoters");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const {auth} = require('../middleware/auth');
-
+const { auth } = require("../middleware/auth");
 
 router.get("/adtostream", async (req, res) => {
   const properties = {
@@ -26,6 +25,27 @@ router.put("/chargeCompany/", async (req, res) => {
   try {
     const response = chargeCompany(bid, companyID);
     //if good - log
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+//need auth!
+router.put("/add_promoter_balance/", async (req, res) => {
+  const { promoterID, moneyToAdd } = req.body;
+  try {
+    const promoter = await PromotersSchema.findOne({ promoterID });
+    const oldBalance = promoter.withdrawal_balance;
+
+    const response = await PromotersSchema.findByIdAndUpdate(
+      promoterID,
+      { withdrawal_balance: promoter.withdrawal_balance + moneyToAdd },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    console.log(response);
   } catch (err) {
     console.error(err);
   }
@@ -57,7 +77,7 @@ router.post("/signup", async (req, res) => {
       email,
       hash_password,
       phone_number,
-      type: 'Promoter'
+      type: "Promoter",
     });
     console.log(promoter);
     console.log(promoter.id);
@@ -67,8 +87,8 @@ router.post("/signup", async (req, res) => {
         first_name,
         last_name,
         email,
-        type: 'Promoter',
-        promoter_id: promoter.id
+        type: "Promoter",
+        promoter_id: promoter.id,
       },
     };
 
@@ -129,7 +149,7 @@ router.post("/login", async (req, res) => {
         last_name: promoter.last_name,
         email: promoter.email,
         type: promoter.type,
-        promoter_id: promoter.id
+        promoter_id: promoter.id,
       },
     };
 
@@ -204,7 +224,7 @@ router.get("/:id", async (req, res) => {
 // @route       PUT /promoters/:id
 // @access      Private
 router.put("/:id", async (req, res) => {
-  // if id === auth.id then => 
+  // if id === auth.id then =>
   try {
     const promoter = await PromotersSchema.findByIdAndUpdate(
       req.params.id,
@@ -232,7 +252,7 @@ router.put("/:id", async (req, res) => {
 // @route       delete /promoters/:id
 // @access      Private
 router.delete("/:id", async (req, res) => {
-  // if id === auth.id then => 
+  // if id === auth.id then =>
   try {
     const promoter = await PromotersSchema.findByIdAndDelete(req.params.id);
 
