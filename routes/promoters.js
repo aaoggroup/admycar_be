@@ -34,8 +34,9 @@ router.put("/chargeCompany/", async (req, res) => {
 router.put("/add_promoter_balance/", async (req, res) => {
   const { promoterID, moneyToAdd } = req.body;
   try {
-    const promoter = await PromotersSchema.findOne({ promoterID });
+    const promoter = await PromotersSchema.findOne({ _id: promoterID });
     const oldBalance = promoter.withdrawal_balance;
+    const newBalance = oldBalance + moneyToAdd;
 
     const response = await PromotersSchema.findByIdAndUpdate(
       promoterID,
@@ -46,6 +47,7 @@ router.put("/add_promoter_balance/", async (req, res) => {
       }
     );
     console.log(response);
+    res.status(200).send(response);
   } catch (err) {
     console.error(err);
   }
