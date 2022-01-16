@@ -4,7 +4,7 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const promotersRoute = require("./routes/promoters");
 const companiesRoute = require("./routes/companies");
-const campaignsRoute = require("./routes/campaigns"); 
+const campaignsRoute = require("./routes/campaigns");
 connectDB();
 const { algo } = require("./algo/algo");
 
@@ -18,7 +18,7 @@ app.use("/promoters", promotersRoute);
 app.use("/companies", companiesRoute);
 app.use("/campaigns", campaignsRoute);
 app.listen(process.env.PORT, process.env.HOST, async () => {
-  await algo({ area: 4 });
+  // await algo({ area: 4 });
   console.log(
     "Running AdMyCar by AAOG server on " +
       process.env.HOST +

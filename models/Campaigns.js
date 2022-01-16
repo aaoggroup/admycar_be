@@ -10,9 +10,9 @@ const CampaignsSchema = new mongoose.Schema({
     required: true,
   },
   company_id: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'companies',
-        required: true
+    type: mongoose.Schema.ObjectId,
+    ref: "companies",
+    required: true,
   },
   asset: {
     type: String,
@@ -23,9 +23,6 @@ const CampaignsSchema = new mongoose.Schema({
   daily_budget: {
     type: Number,
   },
-  today_spent: {
-    type: Number,
-  },
   total_budget: {
     type: Number,
   },
@@ -34,9 +31,11 @@ const CampaignsSchema = new mongoose.Schema({
   },
   today_spent: {
     type: Number,
+    default: 0,
   },
   total_spent: {
     type: Number,
+    default: 0,
   },
   date_created: {
     type: Date,
