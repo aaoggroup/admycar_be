@@ -139,9 +139,11 @@ router.put("/:campaign_id/:company_id", auth, async (req, res) => {
       data: "Not Authorized",
     });
   }
-  if (req.body.asset.includes("dmnpnnrro")) delete req.body.asset;
-  else req.body.asset = await uploadToCloudinary(req.body.asset);
-  console.log(req.body);
+  if (req.body.asset) {
+    if (req.body.asset.includes("dmnpnnrro")) delete req.body.asset;
+    else req.body.asset = await uploadToCloudinary(req.body.asset);
+    console.log(req.body);
+  }
   try {
     const campaign = await CampaignsSchema.findByIdAndUpdate(
       campaign_id,
