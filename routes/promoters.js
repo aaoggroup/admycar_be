@@ -44,7 +44,7 @@ router.put("/charge_company/", async (req, res) => {
       }
     );
     //if good - log
-    console.log(resp);
+    res.status(200).send(resp);
   } catch (err) {
     console.error(err);
   }
