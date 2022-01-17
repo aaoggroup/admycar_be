@@ -3,7 +3,7 @@ const router = express.Router();
 const CompaniesSchema = require("../models/Companies");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const {auth} = require('../middleware/auth');
+const { auth } = require("../middleware/auth");
 
 // @desc        signup company
 // @route       POST /company/signup
@@ -18,7 +18,7 @@ router.post("/signup", async (req, res) => {
     phone_number,
     company_name,
     company_number,
-    company_vat_id
+    company_vat_id,
   } = req.body;
   if (password !== confirm_password) {
     return res.status(400).json({
@@ -34,10 +34,10 @@ router.post("/signup", async (req, res) => {
       email,
       hash_password,
       phone_number,
-      type: 'Company',
+      type: "Company",
       company_name,
       company_number,
-      company_vat_id
+      company_vat_id,
     });
     console.log(company);
     console.log(company.id);
@@ -47,9 +47,9 @@ router.post("/signup", async (req, res) => {
         first_name,
         last_name,
         email,
-        type: 'Company',
+        type: "Company",
         company_name,
-        company_id: company.id
+        company_id: company.id,
       },
     };
     jwt.sign(
@@ -110,7 +110,7 @@ router.post("/login", async (req, res) => {
         email: company.email,
         type: company.type,
         company_name: company.company_name,
-        company_id: company.id
+        company_id: company.id,
       },
     };
 
@@ -141,86 +141,86 @@ router.post("/login", async (req, res) => {
 // @route       GET /companies
 // @access      Private
 // need middleware to authenticate admin
-router.get('/', auth, async(req,res) => {
-  if(req.user.type !== 'Admin'){
+router.get("/", auth, async (req, res) => {
+  if (req.user.type !== "Admin") {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const companies = await CompaniesSchema.find();
 
     res.status(200).json({
-        success: true,
-        data: companies
+      success: true,
+      data: companies,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-        success: false,
-        data: 'Server error'
+      success: false,
+      data: "Server error",
     });
   }
-})
+});
 
 // @desc        Get single company
 // @route       GET /companies/:id
 // @access      Private
-router.get('/:id', auth, async(req,res) => {
-  const { type, company_id } = req.user;
+router.get("/:id", async (req, res) => {
+  // const { type, company_id } = req.user;
   const { id } = req.params;
-  if( type !== 'Admin' || company_id !== id){
-    return res.status(400).json({
-      success: false,
-      data: 'Not Authorized'
-    })
-  }
+  // if (type !== "Admin" || company_id !== id) {
+  //   return res.status(400).json({
+  //     success: false,
+  //     data: "Not Authorized",
+  //   });
+  // }
   try {
-    const company = await CompaniesSchema.find(id);
+    const company = await CompaniesSchema.find({ _id: id });
     res.status(200).json({
-        success: true,
-        data: company
+      success: true,
+      data: company,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-        success: false,
-        data: 'Server error'
+      success: false,
+      data: "Server error",
     });
   }
-})
+});
 
 // @desc        Update company
 // @route       PUT /companies/:id
 // @access      Private
-router.put('/:id', auth, async(req,res) => {
+router.put("/:id", auth, async (req, res) => {
   const { type, company_id } = req.user;
   const { id } = req.params;
-  if( type !== 'Admin' || company_id !== id){
+  if (type !== "Admin" || company_id !== id) {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const company = await CompaniesSchema.findByIdAndUpdate(id, req.body, {
-        new: true,
-        runValidators: true
+      new: true,
+      runValidators: true,
     });
 
     res.status(200).json({
-        success: true,
-        data: company
+      success: true,
+      data: company,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-        success: false,
-        data: 'Server error'
+      success: false,
+      data: "Server error",
     });
   }
-})
+});
 
 // @desc        Delete company
 // @route       delete /companies/:id
@@ -228,11 +228,11 @@ router.put('/:id', auth, async(req,res) => {
 router.delete("/:id", auth, async (req, res) => {
   const { type, company_id } = req.user;
   const { id } = req.params;
-  if( type !== 'Admin' || company_id !== id){
+  if (type !== "Admin" || company_id !== id) {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const company = await PromotersSchema.findByIdAndDelete(id);
