@@ -32,5 +32,8 @@
     "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.6"
+  },
+  "engines": {
+    "node": "14.18.0"
   }
 }

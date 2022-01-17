@@ -18,11 +18,4 @@ app.use("/promoters", promotersRoute);
 app.use("/companies", companiesRoute);
 app.use("/campaigns", campaignsRoute);
 
-app.listen(process.env.PORT || 5000, process.env.HOST, async () => {
-  console.log(
-    "Running AdMyCar by AAOG server on " +
-      process.env.HOST +
-      ":" +
-      process.env.PORT
-  );
-});
+app.listen(process.env.PORT || 5000);
