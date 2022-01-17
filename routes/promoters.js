@@ -11,13 +11,15 @@ require("dotenv").config();
 const { auth } = require("../middleware/auth");
 
 router.get("/adtostream", async (req, res) => {
+  const data = JSON.parse(req.query[0]);
   const properties = {
-    area: req.body.area,
-    promoterID: req.body.promoterID,
+    area: data.area,
+    promoterID: data.promoterID,
   };
   try {
     const adToStream = await algo(properties);
-    res.send(adToStream);
+    if (adToStream === 0) res.status(201).send("No ad to stream");
+    else res.status(200).send(adToStream);
   } catch (err) {
     console.error(err);
   }

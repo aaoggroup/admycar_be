@@ -1,20 +1,36 @@
-//import getAllCampaignsFromDB from db util
 const CampaignsSchema = require("../models/Campaigns");
+
+const rightBorder = 34.935701;
+const leftBorder = 34.657605;
+const bottomBorder = 31.844067;
+const topBorder = 32.209666;
 
 const algo = async (obj) => {
   const { area, promoterID } = obj;
-  const poolOfCampaigns = await getAllRelevantCampaign(area);
+  const areaCode = getAreaCode(area);
+  if (areaCode === 0) return 0;
+  const poolOfCampaigns = await getAllRelevantCampaign(areaCode);
+  if (poolOfCampaigns.length === 0) return 0;
+  if (poolOfCampaigns.length === 1) return poolOfCampaigns[0];
   const campaignToStream = sortCampaigns(poolOfCampaigns);
   //check how many times campaign was live
   //inject to history which promoter got which ad
   return campaignToStream;
 };
 
+const getAreaCode = (area) => {
+  const { lat, lng } = area;
+  if (lng > topBorder || lng < bottomBorder) return 0;
+  if (lat > rightBorder || lat < leftBorder) return 0;
+  if (lng > 34.8559) return 1;
+  if (lng < 34.81068) return 3;
+  return 2;
+};
+
 const sortCampaigns = (campaigns) => {
   const sortedByBid = campaigns.sort((a, b) => b.current_bid - a.current_bid);
   const topBid = sortedByBid[0].current_bid;
   const randomDecimal = Math.random();
-  console.log(randomDecimal);
   if (randomDecimal > 0.3) {
     const filteredByTopBid = sortedByBid.filter(
       (camp) => camp.current_bid === topBid
@@ -30,9 +46,8 @@ const getAllRelevantCampaign = async (area) => {
   const campaigns = await CampaignsSchema.find();
   const filteredCampaigns = campaigns.filter(
     (campaign) =>
-      campaign.daily_budget > campaign.today_spent &&
-      // campaign.area === area &&
-      campaign.campaign_status === "Active"
+      (campaign.daily_budget > campaign.today_spent && campaign.area === 100) ||
+      (campaign.area === area && campaign.campaign_status === "Active")
   );
 
   return filteredCampaigns;
