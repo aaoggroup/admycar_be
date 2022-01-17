@@ -33,14 +33,16 @@ router.put("/charge_company/", async (req, res) => {
       { _id: companyID },
       { balance: company.balance - bid }
     );
+    const campaign = await CampaignsSchema.findById({ _id: campaignID });
     const resp = await CampaignsSchema.findByIdAndUpdate(
       { _id: campaignID },
       {
-        total_spent: company.total_spent + bid,
-        today_spent: company.today_spent + bid,
+        total_spent: campaign.total_spent + bid,
+        today_spent: campaign.today_spent + bid,
       }
     );
     //if good - log
+    console.log(resp);
   } catch (err) {
     console.error(err);
   }
