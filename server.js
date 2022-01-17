@@ -18,7 +18,7 @@ app.use("/promoters", promotersRoute);
 app.use("/companies", companiesRoute);
 app.use("/campaigns", campaignsRoute);
 
-app.listen(process.env.PORT, process.env.HOST, async () => {
+app.listen(process.env.PORT || 5000, async () => {
   console.log(
     "Running AdMyCar by AAOG server on " +
       process.env.HOST +
