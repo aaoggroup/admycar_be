@@ -4,7 +4,7 @@ const router = express.Router();
 const CampaignsSchema = require("../models/Campaigns");
 const { cloudinary, uploadToCloudinary } = require("../config/cloudinary");
 require("dotenv").config();
-const {auth} = require('../middleware/auth');
+const { auth } = require("../middleware/auth");
 
 // @desc        Get all campaigns
 // @route       GET /campaigns
@@ -12,11 +12,11 @@ const {auth} = require('../middleware/auth');
 // need middleware to authenticate admin
 router.get("/", auth, async (req, res) => {
   const { type } = req.user;
-  if( type !== 'Admin' ){
+  if (type !== "Admin") {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const campaigns = await CampaignsSchema.find();
@@ -41,17 +41,16 @@ router.get("/", auth, async (req, res) => {
 router.get("/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { company_id } = req.params;
-  if( type !== 'Admin' || comp_id !== company_id){
+  if (type !== "Company" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const campaigns = await CampaignsSchema.find({
       company_id: company_id,
     });
-    console.log(campaigns);
 
     return res.status(200).json({
       success: true,
@@ -73,11 +72,11 @@ router.get("/:company_id", auth, async (req, res) => {
 router.get("/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
-  if( type !== 'Admin' || comp_id !== company_id){
+  if (type !== "Admin" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const campaign = await CampaignsSchema.find(campaign_id);
@@ -103,16 +102,16 @@ router.post("/:company_id", auth, async (req, res) => {
   const { company_id } = req.params;
   const { asset, ...rest } = req.body;
   console.log(req.body);
-  if( type !== 'Admin' || comp_id !== company_id){
+  if (type !== "Admin" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const cloudRes = await uploadToCloudinery(asset);
-    console.log({...rest, asset: cloudRes});
-    const campaign = await CampaignsSchema.create({...rest, asset: cloudRes});
+    console.log({ ...rest, asset: cloudRes });
+    const campaign = await CampaignsSchema.create({ ...rest, asset: cloudRes });
 
     res.status(200).json({
       success: true,
@@ -133,11 +132,11 @@ router.post("/:company_id", auth, async (req, res) => {
 router.put("/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
-  if( type !== 'Admin' || comp_id !== company_id){
+  if (type !== "Admin" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const campaign = await CampaignsSchema.findByIdAndUpdate(
@@ -168,17 +167,17 @@ router.put("/asset/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
   const { asset } = req.body;
-  if( type !== 'Admin' || comp_id !== company_id){
+  if (type !== "Admin" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
-      data: 'Not Authorized'
-    })
+      data: "Not Authorized",
+    });
   }
   try {
     const cloudRes = await uploadToCloudinery(asset);
     const campaign = await CampaignsSchema.findByIdAndUpdate(
       campaign_id,
-      {asset: cloudRes},
+      { asset: cloudRes },
       {
         new: true,
         runValidators: true,
