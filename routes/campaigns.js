@@ -9,10 +9,10 @@ const { auth } = require("../middleware/auth");
 // @desc        Get all campaigns
 // @route       GET /campaigns
 // @access      Private
-// need middleware to authenticate admin
+// need middleware to authenticate Company
 router.get("/", auth, async (req, res) => {
   const { type } = req.user;
-  if (type !== "Admin") {
+  if (type !== "Company") {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -37,7 +37,7 @@ router.get("/", auth, async (req, res) => {
 // @desc        Get all campaigns by company_id
 // @route       GET /campaigns/:company_id
 // @access      Private
-// need middleware to authenticate admin
+// need middleware to authenticate Company
 router.get("/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { company_id } = req.params;
@@ -72,7 +72,7 @@ router.get("/:company_id", auth, async (req, res) => {
 router.get("/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
-  if (type !== "Admin" || comp_id !== company_id) {
+  if (type !== "Company" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -102,7 +102,7 @@ router.post("/:company_id", auth, async (req, res) => {
   const { company_id } = req.params;
   const { asset, ...rest } = req.body;
   console.log(req.body);
-  if (type !== "Admin" || comp_id !== company_id) {
+  if (type !== "Company" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -132,7 +132,7 @@ router.post("/:company_id", auth, async (req, res) => {
 router.put("/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
-  if (type !== "Admin" || comp_id !== company_id) {
+  if (type !== "Company" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -167,7 +167,7 @@ router.put("/asset/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
   const { asset } = req.body;
-  if (type !== "Admin" || comp_id !== company_id) {
+  if (type !== "Company" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
