@@ -167,15 +167,17 @@ router.get("/", auth, async (req, res) => {
 // @desc        Get single company
 // @route       GET /companies/:id
 // @access      Private
-router.get("/:id", async (req, res) => {
-  // const { type, company_id } = req.user;
+router.get("/:id", auth, async (req, res) => {
+  const { type, company_id } = req.user;
+  console.log("in");
   const { id } = req.params;
-  // if (type !== "Admin" || company_id !== id) {
-  //   return res.status(400).json({
-  //     success: false,
-  //     data: "Not Authorized",
-  //   });
-  // }
+  console.log(id);
+  if (type !== "Admin" && company_id !== id) {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   try {
     const company = await CompaniesSchema.find({ _id: id });
     res.status(200).json({
@@ -197,7 +199,7 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", auth, async (req, res) => {
   const { type, company_id } = req.user;
   const { id } = req.params;
-  if (type !== "Admin" || company_id !== id) {
+  if (type !== "Admin" && company_id !== id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -228,7 +230,7 @@ router.put("/:id", auth, async (req, res) => {
 router.delete("/:id", auth, async (req, res) => {
   const { type, company_id } = req.user;
   const { id } = req.params;
-  if (type !== "Admin" || company_id !== id) {
+  if (type !== "Admin" && company_id !== id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
