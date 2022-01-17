@@ -79,8 +79,8 @@ router.get("/:campaign_id/:company_id", auth, async (req, res) => {
     });
   }
   try {
-    const campaign = await CampaignsSchema.find(campaign_id);
-
+    const campaign = await CampaignsSchema.findById(campaign_id);
+    console.log(campaign);
     res.status(200).json({
       success: true,
       data: campaign,
@@ -109,7 +109,7 @@ router.post("/:company_id", auth, async (req, res) => {
     });
   }
   try {
-    const cloudRes = await uploadToCloudinery(asset);
+    const cloudRes = await uploadToCloudinary(asset);
     console.log({ ...rest, asset: cloudRes });
     const campaign = await CampaignsSchema.create({ ...rest, asset: cloudRes });
 
@@ -132,12 +132,16 @@ router.post("/:company_id", auth, async (req, res) => {
 router.put("/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
+  console.log(req.params);
   if (type !== "Company" || comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
     });
   }
+  if (req.body.asset.includes("dmnpnnrro")) delete req.body.asset;
+  else req.body.asset = await uploadToCloudinary(req.body.asset);
+  console.log(req.body);
   try {
     const campaign = await CampaignsSchema.findByIdAndUpdate(
       campaign_id,
@@ -174,7 +178,7 @@ router.put("/asset/:campaign_id/:company_id", auth, async (req, res) => {
     });
   }
   try {
-    const cloudRes = await uploadToCloudinery(asset);
+    const cloudRes = await uploadToCloudinary(asset);
     const campaign = await CampaignsSchema.findByIdAndUpdate(
       campaign_id,
       { asset: cloudRes },
