@@ -2,6 +2,9 @@ const express = require("express");
 const { algo } = require("../algo/algo");
 const router = express.Router();
 const PromotersSchema = require("../models/Promoters");
+const CompaniesSchema = require("../models/Companies");
+const CampaignsSchema = require("../models/Campaigns");
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -20,10 +23,23 @@ router.get("/adtostream", async (req, res) => {
   }
 });
 
-router.put("/chargeCompany/", async (req, res) => {
-  const { bid, companyID } = req.body;
+router.put("/charge_company/", async (req, res) => {
+  const { bid, companyID, campaignID } = req.body;
+  console.log(req.body);
   try {
-    const response = chargeCompany(bid, companyID);
+    const company = await CompaniesSchema.findById({ _id: companyID });
+    console.log(company);
+    const response = await CompaniesSchema.findByIdAndUpdate(
+      { _id: companyID },
+      { balance: company.balance - bid }
+    );
+    const resp = await CampaignsSchema.findByIdAndUpdate(
+      { _id: campaignID },
+      {
+        total_spent: company.total_spent + bid,
+        today_spent: company.today_spent + bid,
+      }
+    );
     //if good - log
   } catch (err) {
     console.error(err);
