@@ -20,10 +20,10 @@ const algo = async (obj) => {
 
 const getAreaCode = (area) => {
   const { lat, lng } = area;
-  if (lng > topBorder || lng < bottomBorder) return 0;
-  if (lat > rightBorder || lat < leftBorder) return 0;
-  if (lng > 34.8559) return 1;
-  if (lng < 34.81068) return 3;
+  if (lat > topBorder || lat < bottomBorder) return 0;
+  if (lng > rightBorder || lng < leftBorder) return 0;
+  if (lat > 34.8559) return 1;
+  if (lat < 34.81068) return 3;
   return 2;
 };
 
