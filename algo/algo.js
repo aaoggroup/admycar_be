@@ -22,8 +22,8 @@ const getAreaCode = (area) => {
   const { lat, lng } = area;
   if (lat > topBorder || lat < bottomBorder) return 0;
   if (lng > rightBorder || lng < leftBorder) return 0;
-  if (lat > 34.8559) return 1;
-  if (lat < 34.81068) return 3;
+  if (lat > 32.124273) return 1;
+  if (lat < 32.007744) return 3;
   return 2;
 };
 
