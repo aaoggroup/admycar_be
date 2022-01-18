@@ -227,7 +227,7 @@ router.get("/", async (req, res) => {
 // @access      Private
 router.get("/:id", async (req, res) => {
   try {
-    const promoter = await PromotersSchema.find(req.params.id);
+    const promoter = await PromotersSchema.findById(req.params.id);
 
     res.status(200).json({
       success: true,
