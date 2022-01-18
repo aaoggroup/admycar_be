@@ -39,11 +39,15 @@ const sortCampaigns = (campaigns) => {
     else {
       return filteredByTopBid.sort(() => Math.random() - 0.5)[0];
     }
-    // }
-    // if (randomDecimal > 0.3 && randomDecimal < 0.5) {
-    //   const filteredByTopBid = sortedByBid.filter(
-    //     (camp) => camp.current_bid === topBid
-    //   );
+  }
+  if (randomDecimal > 0.3 && randomDecimal < 0.5) {
+    const length = sortedByBid.length;
+    const halfLength = Math.floor(length / 2);
+    const filteredByTopBid = sortedByBid.filter(
+      (camp) =>
+        camp.current_bid < topBid &&
+        camp.current_bid > sortedByBid[halfLength].current_bid
+    );
   } else return campaigns.sort(() => Math.random() - 0.5)[0];
 };
 
