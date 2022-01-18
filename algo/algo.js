@@ -49,6 +49,7 @@ const getAllRelevantCampaign = async (area) => {
       (campaign.daily_budget > campaign.today_spent && campaign.area === 100) ||
       (campaign.area === area && campaign.campaign_status === "Active")
   );
+  console.log(filteredCampaigns);
 
   return filteredCampaigns;
 };
