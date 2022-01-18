@@ -46,8 +46,14 @@ const getAllRelevantCampaign = async (area) => {
   const campaigns = await CampaignsSchema.find();
   const filteredCampaigns = campaigns.filter(
     (campaign) =>
-      (campaign.daily_budget > campaign.today_spent && campaign.area === 100) ||
-      (campaign.area === area && campaign.campaign_status === "Active")
+      (campaign.daily_budget > campaign.today_spent &&
+        campaign.total_budget > campaign.total_spent &&
+        campaign.area === 100 &&
+        campaign.campaign_status === "Active") ||
+      (campaign.daily_budget > campaign.today_spent &&
+        campaign.total_budget > campaign.total_spent &&
+        campaign.area === area &&
+        campaign.campaign_status === "Active")
   );
   console.log(filteredCampaigns);
 
