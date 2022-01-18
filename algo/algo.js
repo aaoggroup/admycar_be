@@ -1,4 +1,7 @@
 const CampaignsSchema = require("../models/Campaigns");
+const CompaniesSchema = require("../models/Companies");
+
+const MINIMUM_BUDGET = 5;
 
 const rightBorder = 34.935701;
 const leftBorder = 34.657605;
@@ -9,13 +12,42 @@ const algo = async (obj) => {
   const { area, promoterID } = obj;
   const areaCode = getAreaCode(area);
   if (areaCode === 0) return 0;
-  const poolOfCampaigns = await getAllRelevantCampaign(areaCode);
+  let poolOfCampaigns = await getAllRelevantCampaign(areaCode);
+  poolOfCampaigns = await removeCompaniesWithoutBalance(poolOfCampaigns);
   if (poolOfCampaigns.length === 0) return 0;
   if (poolOfCampaigns.length === 1) return poolOfCampaigns[0];
   const campaignToStream = sortCampaigns(poolOfCampaigns);
   //check how many times campaign was live
   //inject to history which promoter got which ad
   return campaignToStream;
+};
+
+const removeCompaniesWithoutBalance = async (campaigns) => {
+  const companySet = new Set();
+  campaigns.forEach((camp) => {
+    const actualID = camp.company_id.toString();
+    companySet.add(actualID);
+  });
+
+  const onlyPositive = await checkEachCompanyBalance(companySet);
+
+  const campaignsWithPositiveBalance = campaigns.filter((camp) =>
+    companySet.has(camp.company_id.toString())
+  );
+
+  return campaignsWithPositiveBalance;
+};
+
+const checkEachCompanyBalance = async (companySet) => {
+  for (let id of companySet) {
+    const company = await CompaniesSchema.findById(id);
+
+    if (company.balance <= MINIMUM_BUDGET) {
+      companySet.delete(id);
+    }
+  }
+
+  return companySet;
 };
 
 const getAreaCode = (area) => {
@@ -64,7 +96,6 @@ const getAllRelevantCampaign = async (area) => {
         campaign.area === area &&
         campaign.campaign_status === "Active")
   );
-  console.log(filteredCampaigns);
 
   return filteredCampaigns;
 };
