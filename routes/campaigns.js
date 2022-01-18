@@ -12,7 +12,7 @@ const { auth } = require("../middleware/auth");
 // need middleware to authenticate Company
 router.get("/", auth, async (req, res) => {
   const { type } = req.user;
-  if (type !== "Company") {
+  if (type !== "Admin") {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -41,7 +41,7 @@ router.get("/", auth, async (req, res) => {
 router.get("/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { company_id } = req.params;
-  if (type !== "Company" || comp_id !== company_id) {
+  if (type !== "Admin" && comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -72,7 +72,7 @@ router.get("/:company_id", auth, async (req, res) => {
 router.get("/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
-  if (type !== "Company" || comp_id !== company_id) {
+  if (type !== "Admin" && comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -80,7 +80,6 @@ router.get("/:campaign_id/:company_id", auth, async (req, res) => {
   }
   try {
     const campaign = await CampaignsSchema.findById(campaign_id);
-    console.log(campaign);
     res.status(200).json({
       success: true,
       data: campaign,
@@ -101,8 +100,7 @@ router.post("/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { company_id } = req.params;
   const { asset, ...rest } = req.body;
-  console.log(req.body);
-  if (type !== "Company" || comp_id !== company_id) {
+  if (type !== "Admin" && comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -110,7 +108,6 @@ router.post("/:company_id", auth, async (req, res) => {
   }
   try {
     const cloudRes = await uploadToCloudinary(asset);
-    console.log({ ...rest, asset: cloudRes });
     const campaign = await CampaignsSchema.create({ ...rest, asset: cloudRes });
 
     res.status(200).json({
@@ -132,8 +129,7 @@ router.post("/:company_id", auth, async (req, res) => {
 router.put("/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
-  console.log(req.params);
-  if (type !== "Company" || comp_id !== company_id) {
+  if (type !== "Admin" && comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
@@ -142,7 +138,6 @@ router.put("/:campaign_id/:company_id", auth, async (req, res) => {
   if (req.body.asset) {
     if (req.body.asset.includes("dmnpnnrro")) delete req.body.asset;
     else req.body.asset = await uploadToCloudinary(req.body.asset);
-    console.log(req.body);
   }
   try {
     const campaign = await CampaignsSchema.findByIdAndUpdate(
@@ -173,7 +168,7 @@ router.put("/asset/:campaign_id/:company_id", auth, async (req, res) => {
   const { type, company_id: comp_id } = req.user;
   const { campaign_id, company_id } = req.params;
   const { asset } = req.body;
-  if (type !== "Company" || comp_id !== company_id) {
+  if (type !== "Admin" && comp_id !== company_id) {
     return res.status(400).json({
       success: false,
       data: "Not Authorized",
