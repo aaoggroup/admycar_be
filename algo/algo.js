@@ -39,6 +39,11 @@ const sortCampaigns = (campaigns) => {
     else {
       return filteredByTopBid.sort(() => Math.random() - 0.5)[0];
     }
+    // }
+    // if (randomDecimal > 0.3 && randomDecimal < 0.5) {
+    //   const filteredByTopBid = sortedByBid.filter(
+    //     (camp) => camp.current_bid === topBid
+    //   );
   } else return campaigns.sort(() => Math.random() - 0.5)[0];
 };
 
