@@ -31,7 +31,7 @@ const sortCampaigns = (campaigns) => {
   const sortedByBid = campaigns.sort((a, b) => b.current_bid - a.current_bid);
   const topBid = sortedByBid[0].current_bid;
   const randomDecimal = Math.random();
-  if (randomDecimal > 0.3) {
+  if (randomDecimal > 0.5) {
     const filteredByTopBid = sortedByBid.filter(
       (camp) => camp.current_bid === topBid
     );
