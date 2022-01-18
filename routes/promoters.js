@@ -202,7 +202,14 @@ router.post("/login", async (req, res) => {
 // @route       GET /promoters
 // @access      Private/Admin
 // need middleware to authenticate admin
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
+  const { type } = req.user;
+  if (type !== "Admin") {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   try {
     const promoters = await PromotersSchema.find().populate({
       path: "promoters",
@@ -225,7 +232,15 @@ router.get("/", async (req, res) => {
 // @desc        Get single promoter
 // @route       GET /promoters/:id
 // @access      Private
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
+  const { type, promoter_id } = req.user;
+  const { id } = req.params;
+  if (type !== "Admin" && promoter_id !== id) {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   try {
     const promoter = await PromotersSchema.findById(req.params.id);
 
@@ -245,8 +260,15 @@ router.get("/:id", async (req, res) => {
 // @desc        Update promoter
 // @route       PUT /promoters/:id
 // @access      Private
-router.put("/:id", async (req, res) => {
-  // if id === auth.id then =>
+router.put("/:id", auth, async (req, res) => {
+  const { type, promoter_id } = req.user;
+  const { id } = req.params;
+  if (type !== "Admin" && promoter_id !== id) {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   try {
     const promoter = await PromotersSchema.findByIdAndUpdate(
       req.params.id,
@@ -274,7 +296,14 @@ router.put("/:id", async (req, res) => {
 // @route       delete /promoters/:id
 // @access      Private
 router.delete("/:id", async (req, res) => {
-  // if id === auth.id then =>
+  const { type, promoter_id } = req.user;
+  const { id } = req.params;
+  if (type !== "Admin" && promoter_id !== id) {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   try {
     const promoter = await PromotersSchema.findByIdAndDelete(req.params.id);
 

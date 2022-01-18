@@ -169,9 +169,7 @@ router.get("/", auth, async (req, res) => {
 // @access      Private
 router.get("/:id", auth, async (req, res) => {
   const { type, company_id } = req.user;
-  console.log("in");
   const { id } = req.params;
-  console.log(id);
   if (type !== "Admin" && company_id !== id) {
     return res.status(400).json({
       success: false,
