@@ -10,11 +10,17 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { auth } = require("../middleware/auth");
 
-router.get("/adtostream", async (req, res) => {
-  const data = JSON.parse(req.query[0]);
+router.post("/start-stream/:promoter_id", auth, async (req, res) => {
+  const { promoter_id } = req.params;
+  if (promoter_id !== req.user.promoter_id) {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   const properties = {
-    area: data.area,
-    promoterID: data.promoterID,
+    area: req.body.area,
+    promoterID: req.body.promoterID,
   };
   try {
     const adToStream = await algo(properties);
@@ -25,12 +31,17 @@ router.get("/adtostream", async (req, res) => {
   }
 });
 
-router.put("/charge_company/", async (req, res) => {
+router.put("/charge_company/:company_id/:promoter_id", auth, async (req, res) => {
+  const { promoter_id, company_id } = req.params;
   const { bid, companyID, campaignID } = req.body;
-  console.log(req.body);
+  if (promoter_id !== req.user.promoter_id || companyID !== company_id) {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   try {
     const company = await CompaniesSchema.findById({ _id: companyID });
-    console.log(company);
     const response = await CompaniesSchema.findByIdAndUpdate(
       { _id: companyID },
       { balance: company.balance - bid }
@@ -43,30 +54,34 @@ router.put("/charge_company/", async (req, res) => {
         today_spent: campaign.today_spent + bid,
       }
     );
-    //if good - log
     res.status(200).send(resp);
   } catch (err) {
     console.error(err);
   }
 });
 
-//need auth!
-router.put("/add_promoter_balance/", async (req, res) => {
-  const { promoterID, moneyToAdd } = req.body;
+router.put("/add_promoter_balance/:promoter_id", auth, async (req, res) => {
+  const { promoter_id } = req.params;
+  const { moneyToAdd } = req.body;
+  if (promoter_id !== req.user.promoter_id) {
+    return res.status(400).json({
+      success: false,
+      data: "Not Authorized",
+    });
+  }
   try {
-    const promoter = await PromotersSchema.findOne({ _id: promoterID });
+    const promoter = await PromotersSchema.findOne({ _id: promoter_id });
     const oldBalance = promoter.withdrawal_balance;
     const newBalance = oldBalance + moneyToAdd;
 
     const response = await PromotersSchema.findByIdAndUpdate(
-      promoterID,
+      promoter_id,
       { withdrawal_balance: promoter.withdrawal_balance + moneyToAdd },
       {
         new: true,
         runValidators: true,
       }
     );
-    console.log(response);
     res.status(200).send(response);
   } catch (err) {
     console.error(err);
@@ -101,8 +116,6 @@ router.post("/signup", async (req, res) => {
       phone_number,
       type: "Promoter",
     });
-    console.log(promoter);
-    console.log(promoter.id);
 
     const payload = {
       user: {
@@ -149,7 +162,6 @@ router.post("/login", async (req, res) => {
       });
     }
     const promoter = await PromotersSchema.findOne({ email });
-    console.log(promoter);
 
     if (!promoter) {
       return res.status(400).json({
@@ -175,7 +187,6 @@ router.post("/login", async (req, res) => {
       },
     };
 
-    console.log(payload);
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
